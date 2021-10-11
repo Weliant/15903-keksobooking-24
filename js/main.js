@@ -95,7 +95,8 @@ const PHOTOS = [
 ];
 
 function getArrayOfRandomValues(data, random = false) {
-  const allCount = count = getRandomIntFromRange(1, data.length);
+  const allCount = getRandomIntFromRange(1, data.length);
+  let count = allCount;
   let list = [];
 
   if (random) {
@@ -150,6 +151,6 @@ const createAnnouncement = () => ({
   location: createLocation(),
 });
 
-const similarAnnouncement = Array.from({length: 10}, createAnnouncement);
+const getListOfAnnouncement = () => Array.from({length: 10}, createAnnouncement);
 
-console.log('similarAnnouncement', similarAnnouncement);
+getListOfAnnouncement();
