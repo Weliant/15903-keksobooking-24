@@ -36,13 +36,19 @@ const FEATURES = [
   'conditioner',
 ];
 
+const DESCRIPTION = [
+  'Просторная комната с двумя окнами во двор',
+  'Комната с одним окном',
+  'Две спальни и большой зал с балконом',
+];
+
 const PHOTOS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/duonguyen-8LrGtIxxa4w.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-function getArrayOfRandomValues(data, random = false) {
+const getArrayOfRandomValues = function(data, random = false) {
   const allCount = getRandomIntFromRange(1, data.length);
   let count = allCount;
   let list = [];
@@ -67,7 +73,7 @@ function getArrayOfRandomValues(data, random = false) {
   }
 
   return list;
-}
+};
 
 const createAuthor = () => {
   const num = getRandomIntFromRange(1, 10);
@@ -89,7 +95,7 @@ const createOffer = () => ({
   checkin: CHECKIN[getRandomIntFromRange(0, CHECKIN.length - 1)],
   checkout: CHECKOUT[getRandomIntFromRange(0, CHECKOUT.length - 1)],
   features: getArrayOfRandomValues(FEATURES, true),
-  description: 'Просторная комната с двумя окнами во двор',
+  description: DESCRIPTION[getRandomIntFromRange(0, DESCRIPTION.length - 1)],
   photos: getArrayOfRandomValues(PHOTOS),
 });
 
