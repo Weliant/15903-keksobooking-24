@@ -61,9 +61,9 @@ const offerGenerator = function() {
 
     const time = offerElement.querySelector('.popup__text--time');
     if (offer.checkin || offer.checkout) {
-      time.textContent = `${offer.checkin ? `Заезд после ${offer.checkin}` : ''}
-                            ${offer.checkin && offer.checkout ? ', ' : ''}
-                            ${offer.checkout ? `выезд до ${offer.checkout}` : ''}`;
+      const checkin = `${offer.checkin ? `Заезд после ${offer.checkin}` : ''}`;
+      const checkout = `${offer.checkout ? `${ offer.checkin ? 'выезд' : 'Выезд' } до ${offer.checkout}` : ''}`;
+      time.textContent = `${checkin}${offer.checkin && offer.checkout ? ', ' : ''}${checkout}`;
     } else {
       time.remove();
     }
