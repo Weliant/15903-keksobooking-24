@@ -1,3 +1,4 @@
-import { getListOfAnnouncement } from './data.js';
 
-getListOfAnnouncement();
+import { offerGenerator } from './offer-generator.js';
+
+offerGenerator();
