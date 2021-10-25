@@ -4,10 +4,23 @@ const formFilter = document.querySelector('.map__filters');
 const selectsFormFilter = formFilter.querySelectorAll('select');
 const fieldsetsFormFilter = formFilter.querySelectorAll('fieldset');
 const titleInput = formMain.querySelector('#title');
+const typeInput = formMain.querySelector('#type');
 const priceInput = formMain.querySelector('#price');
+const timeinInput = formMain.querySelector('#timein');
+const timeoutInput = formMain.querySelector('#timeout');
 const roomSelect = formMain.querySelector('#room_number');
 const capacitySelect = formMain.querySelector('#capacity');
 const buttonSubmit = formMain.querySelector('.ad-form__submit');
+
+const ROOMS = [ '100', '1', '2', '3'];
+
+const TYPES = {
+  bungalow: 0,
+  flat: 1000,
+  hotel: 3000,
+  house: 5000,
+  palace: 10000,
+};
 
 const checkActiveForm = function(isActive = false) {
   if(isActive){
@@ -57,6 +70,13 @@ const addValidationTitleField = function(){
   });
 };
 
+const addValidationTypeField = function(){
+  typeInput.addEventListener('change', (evt) => {
+    priceInput.placeholder = TYPES[evt.target.value];
+    priceInput.setAttribute('min', TYPES[evt.target.value]);
+  });
+};
+
 const addValidationPriceField = function(){
   priceInput.addEventListener('invalid', () => {
     if (priceInput.validity.valueMissing) {
@@ -73,23 +93,35 @@ const addValidationPriceField = function(){
   });
 };
 
+const addValidationTimeInField = function(){
+  timeinInput.addEventListener('change', (evt) => {
+    timeoutInput.value = evt.target.value;
+  });
+};
+
+const addValidationTimeOutField = function(){
+  timeoutInput.addEventListener('change', (evt) => {
+    timeinInput.value = evt.target.value;
+  });
+};
+
 const checkCapacityField = function(){
   let textError = '';
 
-  if (roomSelect.value === '100') {
+  if (roomSelect.value === ROOMS[0]) {
     if (capacitySelect.value !== '0') {
       textError = 'Значние должно быть "не для гостей"';
     }
-  } else if (roomSelect.value === '1') {
-    if (capacitySelect.value !== '1') {
+  } else if (roomSelect.value === ROOMS[1]) {
+    if (capacitySelect.value !== ROOMS.slice(1, 2)) {
       textError = 'Выберите количество комнат для 1 гостя';
     }
-  } else if (roomSelect.value === '2') {
-    if (!['1', '2'].includes(capacitySelect.value)) {
+  } else if (roomSelect.value === ROOMS[2]) {
+    if (!ROOMS.slice(1, 3).includes(capacitySelect.value)) {
       textError = 'Выберите количество комнат для 1 или 2 гостей';
     }
-  } else if (roomSelect.value === '3') {
-    if (!['1', '2', '3'].includes(capacitySelect.value)) {
+  } else if (roomSelect.value === ROOMS[3]) {
+    if (!ROOMS.slice(1).includes(capacitySelect.value)) {
       textError = 'Выберите количество комнат для 1, 2 или 3 гостей';
     }
   }
@@ -137,7 +169,10 @@ const onFormSubmit = function(evt){
 
 const checkValidationForm = function(){
   addValidationTitleField();
+  addValidationTypeField();
   addValidationPriceField();
+  addValidationTimeInField();
+  addValidationTimeOutField();
   addValidationRoomField();
   addValidationCapacityField();
   buttonSubmit.addEventListener('click', onFormSubmit);
