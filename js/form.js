@@ -1,16 +1,16 @@
-const formMain = document.querySelector('.ad-form');
-const fieldsetsFormMain = formMain.querySelectorAll('fieldset');
-const formFilter = document.querySelector('.map__filters');
-const selectsFormFilter = formFilter.querySelectorAll('select');
-const fieldsetsFormFilter = formFilter.querySelectorAll('fieldset');
-const titleInput = formMain.querySelector('#title');
-const typeInput = formMain.querySelector('#type');
-const priceInput = formMain.querySelector('#price');
-const timeinInput = formMain.querySelector('#timein');
-const timeoutInput = formMain.querySelector('#timeout');
-const roomSelect = formMain.querySelector('#room_number');
-const capacitySelect = formMain.querySelector('#capacity');
-const buttonSubmit = formMain.querySelector('.ad-form__submit');
+const formMainElement = document.querySelector('.ad-form');
+const fieldsetsFormMainElement = formMainElement.querySelectorAll('fieldset');
+const formFilterElement = document.querySelector('.map__filters');
+const selectsFormFilterElement = formFilterElement.querySelectorAll('select');
+const fieldsetsFormFilterElement = formFilterElement.querySelectorAll('fieldset');
+const titleInputElement = formMainElement.querySelector('#title');
+const typeInputElement = formMainElement.querySelector('#type');
+const priceInputElement = formMainElement.querySelector('#price');
+const timeinInputElement = formMainElement.querySelector('#timein');
+const timeoutInputElement = formMainElement.querySelector('#timeout');
+const roomSelectElement = formMainElement.querySelector('#room_number');
+const capacitySelectElement = formMainElement.querySelector('#capacity');
+const buttonSubmitElement = formMainElement.querySelector('.ad-form__submit');
 
 const ROOMS = [ '100', '1', '2', '3'];
 
@@ -22,106 +22,110 @@ const TYPES = {
   palace: 10000,
 };
 
-const checkActiveForm = function(isActive = false) {
+const toggleActiveStateOfForms = function(isActive = false) {
   if(isActive){
-    formMain.classList.remove('ad-form--disabled');
-    formFilter.classList.remove('ad-form--disabled');
+    formMainElement.classList.remove('ad-form--disabled');
+    formFilterElement.classList.remove('ad-form--disabled');
 
-    fieldsetsFormMain.forEach((item) => {
+    fieldsetsFormMainElement.forEach((item) => {
       item.removeAttribute('disabled');
     });
-    selectsFormFilter.forEach((item) => {
+    selectsFormFilterElement.forEach((item) => {
       item.removeAttribute('disabled');
     });
-    fieldsetsFormFilter.forEach((item) => {
+    fieldsetsFormFilterElement.forEach((item) => {
       item.removeAttribute('disabled');
     });
   } else {
-    formMain.classList.add('ad-form--disabled');
-    formFilter.classList.add('ad-form--disabled');
+    formMainElement.classList.add('ad-form--disabled');
+    formFilterElement.classList.add('ad-form--disabled');
 
-    fieldsetsFormMain.forEach((item) => {
+    fieldsetsFormMainElement.forEach((item) => {
       item.setAttribute('disabled', 'disabled');
     });
-    selectsFormFilter.forEach((item) => {
+    selectsFormFilterElement.forEach((item) => {
       item.setAttribute('disabled', 'disabled');
     });
-    fieldsetsFormFilter.forEach((item) => {
+    fieldsetsFormFilterElement.forEach((item) => {
       item.setAttribute('disabled', 'disabled');
     });
   }
 };
 
 const addValidationTitleField = function(){
-  titleInput.addEventListener('invalid', () => {
-    if (titleInput.validity.valueMissing) {
-      titleInput.setCustomValidity('Обязательное поле');
-    } else if (titleInput.validity.tooShort) {
-      titleInput.setCustomValidity('Заголовок должен состоять минимум из 30-ти символов');
-    } else if (titleInput.validity.tooLong) {
-      titleInput.setCustomValidity('Заголовок не должен превышать 100 символов');
+  titleInputElement.addEventListener('invalid', () => {
+    if (titleInputElement.validity.valueMissing) {
+      titleInputElement.setCustomValidity('Обязательное поле');
+    } else if (titleInputElement.validity.tooShort) {
+      titleInputElement.setCustomValidity('Заголовок должен состоять минимум из 30-ти символов');
+    } else if (titleInputElement.validity.tooLong) {
+      titleInputElement.setCustomValidity('Заголовок не должен превышать 100 символов');
     } else {
-      titleInput.setCustomValidity('');
+      titleInputElement.setCustomValidity('');
     }
   });
 
-  titleInput.addEventListener('input', () => {
-    titleInput.reportValidity();
+  titleInputElement.addEventListener('input', () => {
+    titleInputElement.reportValidity();
   });
 };
 
+const setValuePriceField = function(value){
+  priceInputElement.placeholder = TYPES[value];
+  priceInputElement.setAttribute('min', TYPES[value]);
+};
+
 const addValidationTypeField = function(){
-  typeInput.addEventListener('change', (evt) => {
-    priceInput.placeholder = TYPES[evt.target.value];
-    priceInput.setAttribute('min', TYPES[evt.target.value]);
+  typeInputElement.addEventListener('change', (evt) => {
+    setValuePriceField(evt.target.value);
   });
 };
 
 const addValidationPriceField = function(){
-  priceInput.addEventListener('invalid', () => {
-    if (priceInput.validity.valueMissing) {
-      priceInput.setCustomValidity('Обязательное поле');
-    } else if (priceInput.validity.rangeOverflow ){
-      priceInput.setCustomValidity('Максимальное значение 1 000 000');
+  priceInputElement.addEventListener('invalid', () => {
+    if (priceInputElement.validity.valueMissing) {
+      priceInputElement.setCustomValidity('Обязательное поле');
+    } else if (priceInputElement.validity.rangeOverflow ){
+      priceInputElement.setCustomValidity('Максимальное значение 1 000 000');
     } else{
-      priceInput.setCustomValidity('');
+      priceInputElement.setCustomValidity('');
     }
   });
 
-  priceInput.addEventListener('input', () => {
-    priceInput.reportValidity();
+  priceInputElement.addEventListener('input', () => {
+    priceInputElement.reportValidity();
   });
 };
 
 const addValidationTimeInField = function(){
-  timeinInput.addEventListener('change', (evt) => {
-    timeoutInput.value = evt.target.value;
+  timeinInputElement.addEventListener('change', (evt) => {
+    timeoutInputElement.value = evt.target.value;
   });
 };
 
 const addValidationTimeOutField = function(){
-  timeoutInput.addEventListener('change', (evt) => {
-    timeinInput.value = evt.target.value;
+  timeoutInputElement.addEventListener('change', (evt) => {
+    timeinInputElement.value = evt.target.value;
   });
 };
 
 const checkCapacityField = function(){
   let textError = '';
 
-  if (roomSelect.value === ROOMS[0]) {
-    if (capacitySelect.value !== '0') {
+  if (roomSelectElement.value === ROOMS[0]) {
+    if (capacitySelectElement.value !== '0') {
       textError = 'Значние должно быть "не для гостей"';
     }
-  } else if (roomSelect.value === ROOMS[1]) {
-    if (capacitySelect.value !== ROOMS.slice(1, 2)) {
+  } else if (roomSelectElement.value === ROOMS[1]) {
+    if (!ROOMS.slice(1, 2).includes(capacitySelectElement.value)) {
       textError = 'Выберите количество комнат для 1 гостя';
     }
-  } else if (roomSelect.value === ROOMS[2]) {
-    if (!ROOMS.slice(1, 3).includes(capacitySelect.value)) {
+  } else if (roomSelectElement.value === ROOMS[2]) {
+    if (!ROOMS.slice(1, 3).includes(capacitySelectElement.value)) {
       textError = 'Выберите количество комнат для 1 или 2 гостей';
     }
-  } else if (roomSelect.value === ROOMS[3]) {
-    if (!ROOMS.slice(1).includes(capacitySelect.value)) {
+  } else if (roomSelectElement.value === ROOMS[3]) {
+    if (!ROOMS.slice(1).includes(capacitySelectElement.value)) {
       textError = 'Выберите количество комнат для 1, 2 или 3 гостей';
     }
   }
@@ -133,22 +137,22 @@ const onCapacityChange = function(){
   const textError = checkCapacityField();
 
   if(textError){
-    capacitySelect.setCustomValidity(textError);
+    capacitySelectElement.setCustomValidity(textError);
   } else {
-    capacitySelect.setCustomValidity('');
+    capacitySelectElement.setCustomValidity('');
   }
 
-  capacitySelect.reportValidity();
+  capacitySelectElement.reportValidity();
 };
 
 const addValidationRoomField = function(){
-  roomSelect.addEventListener('change', () => {
+  roomSelectElement.addEventListener('change', () => {
     onCapacityChange();
   });
 };
 
 const addValidationCapacityField = function(){
-  capacitySelect.addEventListener('change', () => {
+  capacitySelectElement.addEventListener('change', () => {
     onCapacityChange();
   });
 };
@@ -156,18 +160,19 @@ const addValidationCapacityField = function(){
 const onFormSubmit = function(evt){
   evt.preventDefault();
 
-  formMain.reportValidity();
+  formMainElement.reportValidity();
 
-  if (formMain.checkValidity()){
+  if (formMainElement.checkValidity()){
     if(checkCapacityField()){
       onCapacityChange();
     } else {
-      formMain.submit();
+      formMainElement.submit();
     }
   }
 };
 
 const checkValidationForm = function(){
+  setValuePriceField(typeInputElement.value);
   addValidationTitleField();
   addValidationTypeField();
   addValidationPriceField();
@@ -175,7 +180,7 @@ const checkValidationForm = function(){
   addValidationTimeOutField();
   addValidationRoomField();
   addValidationCapacityField();
-  buttonSubmit.addEventListener('click', onFormSubmit);
+  buttonSubmitElement.addEventListener('click', onFormSubmit);
 };
 
-export { checkActiveForm, checkValidationForm };
+export { toggleActiveStateOfForms, checkValidationForm };

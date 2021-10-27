@@ -1,12 +1,6 @@
+import { toggleActiveStateOfForms } from './form.js';
+import { initMap } from './init-map.js';
 
-import { offerGenerator } from './offer-generator.js';
-import { checkActiveForm, checkValidationForm } from './form.js';
+toggleActiveStateOfForms();
+initMap();
 
-offerGenerator();
-
-checkActiveForm();
-
-setTimeout(()=> {
-  checkActiveForm(true);
-  checkValidationForm();
-}, 3000);
