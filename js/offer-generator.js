@@ -74,9 +74,13 @@ const offerGenerator = (item) => {
   const featuresList = featuresContainer.querySelectorAll('.popup__feature');
 
   featuresList.forEach( (featureListItem) => {
-    const isNecessary = offer.features.some(
-      (feature) => featureListItem.classList.contains(`popup__feature--${feature}`),
-    );
+    let isNecessary = false;
+
+    if (offer.features && offer.features.length) {
+      isNecessary = offer.features.some(
+        (feature) => featureListItem.classList.contains(`popup__feature--${feature}`),
+      );
+    }
 
     if (!isNecessary) {
       featureListItem.remove();
@@ -87,11 +91,13 @@ const offerGenerator = (item) => {
   const photoItem = photoContainer.querySelector('.popup__photo');
   photoContainer.innerHTML = '';
 
-  offer.photos.forEach( (photo) => {
-    const photoNew = photoItem.cloneNode(true);
-    photoNew.src = photo;
-    photoContainer.appendChild(photoNew);
-  });
+  if (offer.photos && offer.photos.length) {
+    offer.photos.forEach( (photo) => {
+      const photoNew = photoItem.cloneNode(true);
+      photoNew.src = photo;
+      photoContainer.appendChild(photoNew);
+    });
+  }
 
   return offerElement;
 };
