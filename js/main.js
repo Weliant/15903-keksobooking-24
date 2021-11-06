@@ -1,6 +1,7 @@
-import { toggleActiveStateOfForms } from './form.js';
-import { initMap } from './init-map.js';
+import { toggleActiveStateOfForms, setOfferFormSubmit, setOfferFormReset } from './form.js';
+import { initMap, resetCoordinatesOfMainPinMarker } from './init-map.js';
 
 toggleActiveStateOfForms();
 initMap();
-
+setOfferFormSubmit(resetCoordinatesOfMainPinMarker);
+setOfferFormReset(resetCoordinatesOfMainPinMarker);

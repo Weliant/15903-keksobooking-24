@@ -1,3 +1,5 @@
+import { sendData } from './api.js';
+
 const formMainElement = document.querySelector('.ad-form');
 const fieldsetsFormMainElement = formMainElement.querySelectorAll('fieldset');
 const formFilterElement = document.querySelector('.map__filters');
@@ -11,6 +13,12 @@ const timeoutInputElement = formMainElement.querySelector('#timeout');
 const roomSelectElement = formMainElement.querySelector('#room_number');
 const capacitySelectElement = formMainElement.querySelector('#capacity');
 const buttonSubmitElement = formMainElement.querySelector('.ad-form__submit');
+const buttonResetElement = formMainElement.querySelector('.ad-form__reset');
+const messageSuccessTemplate = document.querySelector('#success').content.querySelector('.success');
+const messageSuccess = messageSuccessTemplate.cloneNode(true);
+const messageErrorTemplate = document.querySelector('#error').content.querySelector('.error');
+const messageError = messageErrorTemplate.cloneNode(true);
+const buttonErrorElement = messageError.querySelector('.error__button');
 
 const ROOMS = [ '100', '1', '2', '3'];
 
@@ -21,6 +29,8 @@ const TYPES = {
   house: 5000,
   palace: 10000,
 };
+
+let isErrorSubmit = false;
 
 const toggleActiveStateOfForms = function(isActive = false) {
   if(isActive){
@@ -157,21 +167,45 @@ const addValidationCapacityField = function(){
   });
 };
 
-const onFormSubmit = function(evt){
-  evt.preventDefault();
+const resetForm = function(){
+  formMainElement.reset();
+  formFilterElement.reset();
+  setValuePriceField(typeInputElement.value);
+};
 
-  formMainElement.reportValidity();
+const init = () => {
+  messageSuccess.classList.add('hidden');
+  messageError.classList.add('hidden');
+  document.body.appendChild(messageSuccess);
+  document.body.appendChild(messageError);
 
-  if (formMainElement.checkValidity()){
-    if(checkCapacityField()){
-      onCapacityChange();
-    } else {
-      formMainElement.submit();
+  document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      isErrorSubmit = true;
+      if (isErrorSubmit) {
+        messageError.classList.add('hidden');
+      } else {
+        messageSuccess.classList.add('hidden');
+      }
     }
-  }
+  });
+
+  messageSuccess.addEventListener('click', () => {
+    messageSuccess.classList.add('hidden');
+  });
+
+  messageError.addEventListener('click', () => {
+    messageError.classList.add('hidden');
+  });
+
+  buttonErrorElement.addEventListener('click', () => {
+    messageError.classList.add('hidden');
+  });
 };
 
 const checkValidationForm = function(){
+  init();
   setValuePriceField(typeInputElement.value);
   addValidationTitleField();
   addValidationTypeField();
@@ -180,7 +214,38 @@ const checkValidationForm = function(){
   addValidationTimeOutField();
   addValidationRoomField();
   addValidationCapacityField();
-  buttonSubmitElement.addEventListener('click', onFormSubmit);
 };
 
-export { toggleActiveStateOfForms, checkValidationForm };
+const setOfferFormSubmit = (onSuccess) => {
+  buttonSubmitElement.addEventListener('click', (evt) => {
+    evt.preventDefault();
+
+    formMainElement.reportValidity();
+    if (formMainElement.checkValidity()){
+      if(checkCapacityField()){
+        onCapacityChange();
+      } else {
+        const data = new FormData(formMainElement);
+        sendData(
+          () => {
+            resetForm();
+            onSuccess();
+            messageSuccess.classList.remove('hidden');
+          },
+          () => { messageError.classList.remove('hidden'); },
+          data,
+        );
+      }
+    }
+  });
+};
+
+const setOfferFormReset = (onSuccess) => {
+  buttonResetElement.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    resetForm();
+    onSuccess();
+  });
+};
+
+export { toggleActiveStateOfForms, checkValidationForm, setOfferFormSubmit, setOfferFormReset };
