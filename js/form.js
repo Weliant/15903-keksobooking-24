@@ -2,9 +2,6 @@ import { sendData } from './api.js';
 
 const formMainElement = document.querySelector('.ad-form');
 const fieldsetsFormMainElement = formMainElement.querySelectorAll('fieldset');
-const formFilterElement = document.querySelector('.map__filters');
-const selectsFormFilterElement = formFilterElement.querySelectorAll('select');
-const fieldsetsFormFilterElement = formFilterElement.querySelectorAll('fieldset');
 const titleInputElement = formMainElement.querySelector('#title');
 const typeInputElement = formMainElement.querySelector('#type');
 const priceInputElement = formMainElement.querySelector('#price');
@@ -14,14 +11,22 @@ const roomSelectElement = formMainElement.querySelector('#room_number');
 const capacitySelectElement = formMainElement.querySelector('#capacity');
 const buttonSubmitElement = formMainElement.querySelector('.ad-form__submit');
 const buttonResetElement = formMainElement.querySelector('.ad-form__reset');
+
+const formFilterElement = document.querySelector('.map__filters');
+const selectsFormFilterElement = formFilterElement.querySelectorAll('select');
+const typeSelectFilterElement = formFilterElement.querySelector('#housing-type');
+const priceSelectFilterElement = formFilterElement.querySelector('#housing-price');
+const roomsSelectFilterElement = formFilterElement.querySelector('#housing-rooms');
+const guestsSelectFilterElement = formFilterElement.querySelector('#housing-guests');
+const fieldsetsFormFilterElement = formFilterElement.querySelectorAll('fieldset');
+
 const messageSuccessTemplate = document.querySelector('#success').content.querySelector('.success');
-const messageSuccess = messageSuccessTemplate.cloneNode(true);
+const messageSuccessElement = messageSuccessTemplate.cloneNode(true);
 const messageErrorTemplate = document.querySelector('#error').content.querySelector('.error');
-const messageError = messageErrorTemplate.cloneNode(true);
-const buttonErrorElement = messageError.querySelector('.error__button');
+const messageErrorElement = messageErrorTemplate.cloneNode(true);
+const buttonErrorElement = messageErrorElement.querySelector('.error__button');
 
 const ROOMS = [ '100', '1', '2', '3'];
-
 const TYPES = {
   bungalow: 0,
   flat: 1000,
@@ -29,8 +34,8 @@ const TYPES = {
   house: 5000,
   palace: 10000,
 };
-
 let isErrorSubmit = false;
+let filtersSelected = {};
 
 const toggleActiveStateOfForms = function(isActive = false) {
   if(isActive){
@@ -167,45 +172,77 @@ const addValidationCapacityField = function(){
   });
 };
 
-const resetForm = function(){
-  formMainElement.reset();
-  formFilterElement.reset();
-  setValuePriceField(typeInputElement.value);
-};
-
 const init = () => {
-  messageSuccess.classList.add('hidden');
-  messageError.classList.add('hidden');
-  document.body.appendChild(messageSuccess);
-  document.body.appendChild(messageError);
+  messageSuccessElement.classList.add('hidden');
+  messageErrorElement.classList.add('hidden');
+  document.body.appendChild(messageSuccessElement);
+  document.body.appendChild(messageErrorElement);
 
   document.addEventListener('keydown', (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
       isErrorSubmit = true;
       if (isErrorSubmit) {
-        messageError.classList.add('hidden');
+        messageErrorElement.classList.add('hidden');
       } else {
-        messageSuccess.classList.add('hidden');
+        messageSuccessElement.classList.add('hidden');
       }
     }
   });
 
-  messageSuccess.addEventListener('click', () => {
-    messageSuccess.classList.add('hidden');
+  messageSuccessElement.addEventListener('click', () => {
+    messageSuccessElement.classList.add('hidden');
   });
 
-  messageError.addEventListener('click', () => {
-    messageError.classList.add('hidden');
+  messageErrorElement.addEventListener('click', () => {
+    messageErrorElement.classList.add('hidden');
   });
 
   buttonErrorElement.addEventListener('click', () => {
-    messageError.classList.add('hidden');
+    messageErrorElement.classList.add('hidden');
+  });
+};
+
+const initFilterData = function(){
+  filtersSelected = {
+    type: typeSelectFilterElement.value,
+    price: priceSelectFilterElement.value,
+    rooms: roomsSelectFilterElement.value,
+    guests: guestsSelectFilterElement.value,
+    features: [],
+  };
+};
+
+const resetForm = function(){
+  formMainElement.reset();
+  formFilterElement.reset();
+  setValuePriceField(typeInputElement.value);
+  initFilterData();
+};
+
+const setChangeFilterSelect = function(cb){
+  formFilterElement.addEventListener('change', (evt)=> {
+    if (evt.target.matches('select.map__filter')) {
+      const type = evt.target.id.replace('housing-','');
+      filtersSelected[type] = evt.target.value;
+    } else if (evt.target.matches('input[type="checkbox"]')) {
+      const indx = filtersSelected.features.indexOf(evt.target.value);
+
+      if (evt.target.checked) {
+        if (indx === -1) {
+          filtersSelected.features.push(evt.target.value);
+        }
+      } else {
+        filtersSelected.features.splice(indx, 1);
+      }
+    }
+    cb(filtersSelected);
   });
 };
 
 const checkValidationForm = function(){
   init();
+  initFilterData();
   setValuePriceField(typeInputElement.value);
   addValidationTitleField();
   addValidationTypeField();
@@ -230,9 +267,9 @@ const setOfferFormSubmit = (onSuccess) => {
           () => {
             resetForm();
             onSuccess();
-            messageSuccess.classList.remove('hidden');
+            messageSuccessElement.classList.remove('hidden');
           },
-          () => { messageError.classList.remove('hidden'); },
+          () => { messageErrorElement.classList.remove('hidden'); },
           data,
         );
       }
@@ -248,4 +285,4 @@ const setOfferFormReset = (onSuccess) => {
   });
 };
 
-export { toggleActiveStateOfForms, checkValidationForm, setOfferFormSubmit, setOfferFormReset };
+export { toggleActiveStateOfForms, checkValidationForm, setOfferFormSubmit, setOfferFormReset, setChangeFilterSelect };
