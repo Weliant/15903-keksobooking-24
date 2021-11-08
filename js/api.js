@@ -1,5 +1,7 @@
+const URL = 'https://24.javascript.pages.academy/keksobooking';
+
 const getData = (onSuccess, onFail) => {
-  fetch('https://24.javascript.pages.academy/keksobooking/data')
+  fetch(`${URL}/data`)
     .then((response) => response.json())
     .then((offers) => onSuccess(offers))
     .catch(() => {
@@ -9,7 +11,7 @@ const getData = (onSuccess, onFail) => {
 
 const sendData = (onSuccess, onFail, body) => {
   fetch(
-    'https://24.javascript.pages.academy/keksobooking',
+    `${URL}`,
     {
       method: 'POST',
       body,
