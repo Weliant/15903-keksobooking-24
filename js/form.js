@@ -26,6 +26,13 @@ const messageErrorTemplate = document.querySelector('#error').content.querySelec
 const messageErrorElement = messageErrorTemplate.cloneNode(true);
 const buttonErrorElement = messageErrorElement.querySelector('.error__button');
 
+const avatarLoadElement = document.querySelector('.ad-form__field input[type="file"]');
+const avatarPreview = document.querySelector('.ad-form-header__preview img');
+
+const photoLoadElement = document.querySelector('.ad-form__upload input[type="file"]');
+const photoPreview = document.querySelector('.ad-form__photo');
+
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const ROOMS = [ '100', '1', '2', '3'];
 const TYPES = {
   bungalow: 0,
@@ -65,6 +72,38 @@ const toggleActiveStateOfForms = function(isActive = false) {
       item.setAttribute('disabled', 'disabled');
     });
   }
+};
+
+const compareExtensions = function(file) {
+  const fileName = file.name.toLowerCase();
+  return FILE_TYPES.some((it) => fileName.endsWith(it));
+};
+
+const addLoadFile = function(){
+  avatarLoadElement.addEventListener('change', (evt) => {
+    const file = evt.target.files[0];
+    const matches = compareExtensions(file);
+
+    if (matches) {
+      avatarPreview.src = URL.createObjectURL(file);
+    }
+  });
+
+  photoLoadElement.addEventListener('change', (evt) => {
+    const file = evt.target.files[0];
+    const matches = compareExtensions(file);
+
+    if (matches) {
+      if (photoPreview.querySelector('img')) {
+        photoPreview.querySelector('img').remove();
+      }
+      const imgElement = document.createElement('img');
+      imgElement.src = URL.createObjectURL(file);
+      imgElement.style.width = '70px';
+      imgElement.style.height = '100%';
+      photoPreview.appendChild(imgElement);
+    }
+  });
 };
 
 const addValidationTitleField = function(){
@@ -251,6 +290,7 @@ const checkValidationForm = function(){
   addValidationTimeOutField();
   addValidationRoomField();
   addValidationCapacityField();
+  addLoadFile();
 };
 
 const setOfferFormSubmit = (onSuccess) => {
@@ -263,6 +303,7 @@ const setOfferFormSubmit = (onSuccess) => {
         onCapacityChange();
       } else {
         const data = new FormData(formMainElement);
+
         sendData(
           () => {
             resetForm();
