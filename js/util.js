@@ -1,14 +1,10 @@
 const ALERT_SHOW_TIME = 10000;
 
-const getCorrectPositiveOrZeroValues = function(value){
-  return value < 0 ? 0 : value;
-};
+const getCorrectPositiveOrZeroValues = (value) => value < 0 ? 0 : value;
 
-const calculateRandomIntFromRange = function(min, max){
-  return Math.floor(Math.random() * (max + 1 - min) + min);
-};
+const calculateRandomIntFromRange = (min, max) => Math.floor(Math.random() * (max + 1 - min) + min);
 
-const getRandomIntFromRange = function(from, to){
+const getRandomIntFromRange = (from, to) => {
   const correctFrom = getCorrectPositiveOrZeroValues(from);
   const correctTo = getCorrectPositiveOrZeroValues(to);
 
@@ -23,14 +19,14 @@ const getRandomIntFromRange = function(from, to){
   return calculateRandomIntFromRange(correctFrom, correctTo);
 };
 
-const calculateRandomNumber = function(min, max, quantity){
+const calculateRandomNumber = (min, max, quantity) => {
   const roundMin = Math.floor(min * quantity);
   const roundMax = Math.floor(max * quantity);
   const randomInt = Math.floor(Math.random() * (roundMax + 1 - roundMin) + roundMin);
   return randomInt/quantity;
 };
 
-const getRandomCoordinate = function(from, to, quantity){
+const getRandomCoordinate = (from, to, quantity = 5) => {
   const count = Math.pow(10, quantity);
   const correctFrom = getCorrectPositiveOrZeroValues(from);
   const correctTo = getCorrectPositiveOrZeroValues(to);

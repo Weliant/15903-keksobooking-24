@@ -24,7 +24,6 @@ const messageSuccessTemplate = document.querySelector('#success').content.queryS
 const messageSuccessElement = messageSuccessTemplate.cloneNode(true);
 const messageErrorTemplate = document.querySelector('#error').content.querySelector('.error');
 const messageErrorElement = messageErrorTemplate.cloneNode(true);
-const buttonErrorElement = messageErrorElement.querySelector('.error__button');
 
 const avatarLoadElement = document.querySelector('.ad-form__field input[type="file"]');
 const avatarPreview = document.querySelector('.ad-form-header__preview img');
@@ -44,7 +43,7 @@ const TYPES = {
 let isErrorSubmit = false;
 let filtersSelected = {};
 
-const toggleActiveStateOfForms = function(isActive = false) {
+const toggleActiveStateOfForms = (isActive = false) => {
   if(isActive){
     formMainElement.classList.remove('ad-form--disabled');
     formFilterElement.classList.remove('ad-form--disabled');
@@ -74,12 +73,12 @@ const toggleActiveStateOfForms = function(isActive = false) {
   }
 };
 
-const compareExtensions = function(file) {
+const compareExtensions = (file) => {
   const fileName = file.name.toLowerCase();
   return FILE_TYPES.some((it) => fileName.endsWith(it));
 };
 
-const addLoadFile = function(){
+const addLoadFile = () => {
   avatarLoadElement.addEventListener('change', (evt) => {
     const file = evt.target.files[0];
     const matches = compareExtensions(file);
@@ -106,7 +105,7 @@ const addLoadFile = function(){
   });
 };
 
-const addValidationTitleField = function(){
+const addValidationTitleField = () => {
   titleInputElement.addEventListener('invalid', () => {
     if (titleInputElement.validity.valueMissing) {
       titleInputElement.setCustomValidity('Обязательное поле');
@@ -124,18 +123,18 @@ const addValidationTitleField = function(){
   });
 };
 
-const setValuePriceField = function(value){
+const setValuePriceField = (value) => {
   priceInputElement.placeholder = TYPES[value];
   priceInputElement.setAttribute('min', TYPES[value]);
 };
 
-const addValidationTypeField = function(){
+const addValidationTypeField = () => {
   typeInputElement.addEventListener('change', (evt) => {
     setValuePriceField(evt.target.value);
   });
 };
 
-const addValidationPriceField = function(){
+const addValidationPriceField = () => {
   priceInputElement.addEventListener('invalid', () => {
     if (priceInputElement.validity.valueMissing) {
       priceInputElement.setCustomValidity('Обязательное поле');
@@ -151,19 +150,19 @@ const addValidationPriceField = function(){
   });
 };
 
-const addValidationTimeInField = function(){
+const addValidationTimeInField = () => {
   timeinInputElement.addEventListener('change', (evt) => {
     timeoutInputElement.value = evt.target.value;
   });
 };
 
-const addValidationTimeOutField = function(){
+const addValidationTimeOutField = () => {
   timeoutInputElement.addEventListener('change', (evt) => {
     timeinInputElement.value = evt.target.value;
   });
 };
 
-const checkCapacityField = function(){
+const checkCapacityField = () => {
   let textError = '';
 
   if (roomSelectElement.value === ROOMS[0]) {
@@ -187,7 +186,7 @@ const checkCapacityField = function(){
   return textError;
 };
 
-const onCapacityChange = function(){
+const onCapacityChange = () =>{
   const textError = checkCapacityField();
 
   if(textError){
@@ -199,50 +198,52 @@ const onCapacityChange = function(){
   capacitySelectElement.reportValidity();
 };
 
-const addValidationRoomField = function(){
+const addValidationRoomField = () => {
   roomSelectElement.addEventListener('change', () => {
     onCapacityChange();
   });
 };
 
-const addValidationCapacityField = function(){
+const addValidationCapacityField = () => {
   capacitySelectElement.addEventListener('change', () => {
     onCapacityChange();
   });
 };
 
+const onMessageClose = (evt) => {
+  const selectors = isErrorSubmit ? '.error' : '.success';
+  const foundElement = evt.target.closest(selectors);
+
+  if (foundElement) {
+    foundElement.classList.add('hidden');
+  }
+
+  isErrorSubmit = false;
+};
+
 const init = () => {
   messageSuccessElement.classList.add('hidden');
   messageErrorElement.classList.add('hidden');
+
   document.body.appendChild(messageSuccessElement);
   document.body.appendChild(messageErrorElement);
 
   document.addEventListener('keydown', (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      isErrorSubmit = true;
+
       if (isErrorSubmit) {
         messageErrorElement.classList.add('hidden');
+        messageErrorElement.removeEventListener('click', onMessageClose);
       } else {
         messageSuccessElement.classList.add('hidden');
+        messageSuccessElement.removeEventListener('click', onMessageClose);
       }
     }
   });
-
-  messageSuccessElement.addEventListener('click', () => {
-    messageSuccessElement.classList.add('hidden');
-  });
-
-  messageErrorElement.addEventListener('click', () => {
-    messageErrorElement.classList.add('hidden');
-  });
-
-  buttonErrorElement.addEventListener('click', () => {
-    messageErrorElement.classList.add('hidden');
-  });
 };
 
-const initFilterData = function(){
+const initFilterData = () => {
   filtersSelected = {
     type: typeSelectFilterElement.value,
     price: priceSelectFilterElement.value,
@@ -252,14 +253,14 @@ const initFilterData = function(){
   };
 };
 
-const resetForm = function(){
+const resetForm = () => {
   formMainElement.reset();
   formFilterElement.reset();
   setValuePriceField(typeInputElement.value);
   initFilterData();
 };
 
-const setChangeFilterSelect = function(cb){
+const setChangeFilterSelect = (cb) => {
   formFilterElement.addEventListener('change', (evt)=> {
     if (evt.target.matches('select.map__filter')) {
       const type = evt.target.id.replace('housing-','');
@@ -279,7 +280,7 @@ const setChangeFilterSelect = function(cb){
   });
 };
 
-const checkValidationForm = function(){
+const checkValidationForm = () => {
   init();
   initFilterData();
   setValuePriceField(typeInputElement.value);
@@ -308,9 +309,20 @@ const setOfferFormSubmit = (onSuccess) => {
           () => {
             resetForm();
             onSuccess();
-            messageSuccessElement.classList.remove('hidden');
+
+            if (messageSuccessElement.classList.contains('hidden')) {
+              messageSuccessElement.classList.remove('hidden');
+              messageSuccessElement.addEventListener('click', onMessageClose, { once: true });
+            }
           },
-          () => { messageErrorElement.classList.remove('hidden'); },
+          () => {
+            isErrorSubmit = true;
+
+            if (messageErrorElement.classList.contains('hidden')) {
+              messageErrorElement.classList.remove('hidden');
+              messageErrorElement.addEventListener('click', onMessageClose, { once: true });
+            }
+          },
           data,
         );
       }

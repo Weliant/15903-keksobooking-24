@@ -15,13 +15,13 @@ const TYPES = [
   'hotel',
 ];
 
-const CHECKIN = [
+const CHECKIN_TIMES = [
   '12:00',
   '13:00',
   '14:00',
 ];
 
-const CHECKOUT = [
+const CHECKOUT_TIMES = [
   '12:00',
   '13:00',
   '14:00',
@@ -36,7 +36,7 @@ const FEATURES = [
   'conditioner',
 ];
 
-const DESCRIPTION = [
+const DESCRIPTIONS = [
   'Просторная комната с двумя окнами во двор',
   'Комната с одним окном',
   'Две спальни и большой зал с балконом',
@@ -48,7 +48,7 @@ const PHOTOS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-const getArrayOfRandomValues = function(data, random = false) {
+const getArrayOfRandomValues = (data, random = false) => {
   const allCount = getRandomIntFromRange(1, data.length);
   let count = allCount;
   let list = [];
@@ -81,8 +81,8 @@ const createAuthor = () => {
 };
 
 const createLocation = () => ({
-  lat: getRandomCoordinate(35.65000, 35.70000, 5),
-  lng: getRandomCoordinate(139.70000, 139.80000, 5),
+  lat: getRandomCoordinate(35.65000, 35.70000),
+  lng: getRandomCoordinate(139.70000, 139.80000),
 });
 
 const createOffer = () => ({
@@ -92,10 +92,10 @@ const createOffer = () => ({
   type: TYPES[getRandomIntFromRange(0, TYPES.length - 1)],
   rooms: getRandomIntFromRange(1, 5),
   guests: getRandomIntFromRange(1, 10),
-  checkin: CHECKIN[getRandomIntFromRange(0, CHECKIN.length - 1)],
-  checkout: CHECKOUT[getRandomIntFromRange(0, CHECKOUT.length - 1)],
+  checkin: CHECKIN_TIMES[getRandomIntFromRange(0, CHECKIN_TIMES.length - 1)],
+  checkout: CHECKOUT_TIMES[getRandomIntFromRange(0, CHECKOUT_TIMES.length - 1)],
   features: getArrayOfRandomValues(FEATURES, true),
-  description: DESCRIPTION[getRandomIntFromRange(0, DESCRIPTION.length - 1)],
+  description: DESCRIPTIONS[getRandomIntFromRange(0, DESCRIPTIONS.length - 1)],
   photos: getArrayOfRandomValues(PHOTOS),
 });
 

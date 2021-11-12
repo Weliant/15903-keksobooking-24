@@ -5,7 +5,7 @@ import { showAlert } from './util.js';
 
 const addressInputElement = document.querySelector('#address');
 
-const PRICE = {
+const PRICES = {
   middle: { from: 10000, to: 50000},
   low: 10000,
   high: 50000,
@@ -39,7 +39,7 @@ const mainPinMarker = L.marker(
 
 const markerGroup = L.layerGroup().addTo(map);
 
-const initCoordinatesOfMainPinMarker = function() {
+const initCoordinatesOfMainPinMarker = () => {
   mainPinMarker.setLatLng(COORDINATES_OF_TOKIO);
   addressInputElement.value = `${COORDINATES_OF_TOKIO.lat}, ${COORDINATES_OF_TOKIO.lng}`;
 };
@@ -47,7 +47,7 @@ const initCoordinatesOfMainPinMarker = function() {
 let pointsData = [];
 let pointsDataFilter = [];
 
-const renderPoints = function(points) {
+const renderPoints = (points) => {
   markerGroup.clearLayers();
   points.forEach((item) => {
     const pinIcon = L.icon({
@@ -107,11 +107,11 @@ const filterPoints = (filterData = {}) => {
         matchingValuesCount++;
       }
       if (filterData.price !== 'any') {
-        if (filterData.price === 'low' && offer.price <= PRICE[filterData.price]) {
+        if (filterData.price === 'low' && offer.price <= PRICES[filterData.price]) {
           matchingValuesCount++;
-        } else if (filterData.price === 'middle' && PRICE[filterData.price].from <= offer.price <= PRICE[filterData.price].to) {
+        } else if (filterData.price === 'middle' && PRICES[filterData.price].from <= offer.price <= PRICES[filterData.price].to) {
           matchingValuesCount++;
-        } else if (filterData.price === 'high' && PRICE[filterData.price] <= offer.price) {
+        } else if (filterData.price === 'high' && PRICES[filterData.price] <= offer.price) {
           matchingValuesCount++;
         }
       }
@@ -141,7 +141,7 @@ const filterPoints = (filterData = {}) => {
   renderPoints(pointsDataFilter);
 };
 
-const getDataPoints = function() {
+const getDataPoints = () => {
   getData((points) => {
     pointsData = points;
     filterPoints();
@@ -149,7 +149,7 @@ const getDataPoints = function() {
   () => showAlert('Ошибка загрузки данных. Обновите страницу снова.'));
 };
 
-const initMap = function() {
+const initMap = () => {
   map.on('load', () => {
     toggleActiveStateOfForms(true);
     checkValidationForm();
@@ -171,7 +171,7 @@ const initMap = function() {
   });
 };
 
-const resetCoordinatesOfMainPinMarker = function() {
+const resetCoordinatesOfMainPinMarker = () => {
   initCoordinatesOfMainPinMarker();
   markerGroup.eachLayer((layer) => {
     layer.closePopup();
