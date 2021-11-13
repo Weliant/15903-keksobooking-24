@@ -26,11 +26,12 @@ const messageErrorTemplate = document.querySelector('#error').content.querySelec
 const messageErrorElement = messageErrorTemplate.cloneNode(true);
 
 const avatarLoadElement = document.querySelector('.ad-form__field input[type="file"]');
-const avatarPreview = document.querySelector('.ad-form-header__preview img');
+const avatarPreviewElement = document.querySelector('.ad-form-header__preview img');
 
 const photoLoadElement = document.querySelector('.ad-form__upload input[type="file"]');
-const photoPreview = document.querySelector('.ad-form__photo');
+const photoPreviewElement = document.querySelector('.ad-form__photo');
 
+const DEFAULT_SRC_AVATAR = 'img/muffin-grey.svg';
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const ROOMS = [ '100', '1', '2', '3'];
 const TYPES = {
@@ -84,7 +85,7 @@ const addLoadFile = () => {
     const matches = compareExtensions(file);
 
     if (matches) {
-      avatarPreview.src = URL.createObjectURL(file);
+      avatarPreviewElement.src = URL.createObjectURL(file);
     }
   });
 
@@ -93,14 +94,14 @@ const addLoadFile = () => {
     const matches = compareExtensions(file);
 
     if (matches) {
-      if (photoPreview.querySelector('img')) {
-        photoPreview.querySelector('img').remove();
+      if (photoPreviewElement.querySelector('img')) {
+        photoPreviewElement.querySelector('img').remove();
       }
       const imgElement = document.createElement('img');
       imgElement.src = URL.createObjectURL(file);
       imgElement.style.width = '70px';
       imgElement.style.height = '100%';
-      photoPreview.appendChild(imgElement);
+      photoPreviewElement.appendChild(imgElement);
     }
   });
 };
@@ -258,6 +259,13 @@ const resetForm = () => {
   formFilterElement.reset();
   setValuePriceField(typeInputElement.value);
   initFilterData();
+
+  avatarPreviewElement.src = DEFAULT_SRC_AVATAR;
+
+  const imgPreviewElement = photoPreviewElement.querySelector('img');
+  if (imgPreviewElement) {
+    photoPreviewElement.removeChild(imgPreviewElement);
+  }
 };
 
 const setChangeFilterSelect = (cb) => {
