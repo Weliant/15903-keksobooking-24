@@ -44,14 +44,10 @@ const TYPES = {
 let isErrorSubmit = false;
 let filtersSelected = {};
 
-const toggleActiveStateOfForms = (isActive = false) => {
+const toggleActiveStateOfFilterForm = (isActive = false) => {
   if(isActive){
-    formMainElement.classList.remove('ad-form--disabled');
     formFilterElement.classList.remove('ad-form--disabled');
 
-    fieldsetsFormMainElement.forEach((item) => {
-      item.removeAttribute('disabled');
-    });
     selectsFormFilterElement.forEach((item) => {
       item.removeAttribute('disabled');
     });
@@ -59,16 +55,28 @@ const toggleActiveStateOfForms = (isActive = false) => {
       item.removeAttribute('disabled');
     });
   } else {
-    formMainElement.classList.add('ad-form--disabled');
     formFilterElement.classList.add('ad-form--disabled');
 
-    fieldsetsFormMainElement.forEach((item) => {
-      item.setAttribute('disabled', 'disabled');
-    });
     selectsFormFilterElement.forEach((item) => {
       item.setAttribute('disabled', 'disabled');
     });
     fieldsetsFormFilterElement.forEach((item) => {
+      item.setAttribute('disabled', 'disabled');
+    });
+  }
+};
+
+const toggleActiveStateOfMainForm = (isActive = false) => {
+  if(isActive){
+    formMainElement.classList.remove('ad-form--disabled');
+
+    fieldsetsFormMainElement.forEach((item) => {
+      item.removeAttribute('disabled');
+    });
+  } else {
+    formMainElement.classList.add('ad-form--disabled');
+
+    fieldsetsFormMainElement.forEach((item) => {
       item.setAttribute('disabled', 'disabled');
     });
   }
@@ -346,4 +354,4 @@ const setOfferFormReset = (onSuccess) => {
   });
 };
 
-export { toggleActiveStateOfForms, checkValidationForm, setOfferFormSubmit, setOfferFormReset, setChangeFilterSelect };
+export { toggleActiveStateOfMainForm, toggleActiveStateOfFilterForm, checkValidationForm, setOfferFormSubmit, setOfferFormReset, setChangeFilterSelect };

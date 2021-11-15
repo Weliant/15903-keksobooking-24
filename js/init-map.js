@@ -1,4 +1,4 @@
-import { toggleActiveStateOfForms, checkValidationForm } from './form.js';
+import { toggleActiveStateOfMainForm, toggleActiveStateOfFilterForm, checkValidationForm } from './form.js';
 import { offerGenerator } from './offer-generator.js';
 import { getData } from './api.js';
 import { showAlert } from './util.js';
@@ -16,14 +16,23 @@ const COORDINATES_OF_TOKIO = {
   lng: 139.69171,
 };
 
+const MAIN_PIN_ICON_SIZE = {
+  iconSize: [52, 52],
+  iconAnchor: [26, 52],
+};
+
+const PIN_ICON_SIZE = {
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+};
+
 const SIMILAR_OFFER_COUNT = 10;
 
 const map = L.map('map-canvas');
 
 const mainPinIcon = L.icon({
   iconUrl: '../img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
+  ...MAIN_PIN_ICON_SIZE,
 });
 
 const mainPinMarker = L.marker(
@@ -52,8 +61,7 @@ const renderPoints = (points) => {
   points.forEach((item) => {
     const pinIcon = L.icon({
       iconUrl: '../img/pin.svg',
-      iconSize: [40, 40],
-      iconAnchor: [20, 40],
+      ...PIN_ICON_SIZE,
     });
 
     const marker = L.marker(
@@ -78,6 +86,8 @@ const compareOffers = (offerA, offerB) => {
 
   return lenB - lenA;
 };
+
+const getPointsDataFilter = (data) => data.length > SIMILAR_OFFER_COUNT ? data.slice().sort(compareOffers).slice(0, SIMILAR_OFFER_COUNT) : data;
 
 const filterPoints = (filterData = {}) => {
   let filterCount = 0;
@@ -130,31 +140,30 @@ const filterPoints = (filterData = {}) => {
         return false;
       }
     });
-
-    if (pointsDataFilter.length > 10) {
-      pointsDataFilter = pointsDataFilter.slice().sort(compareOffers).slice(0, SIMILAR_OFFER_COUNT);
-    }
-  } else {
-    pointsDataFilter = pointsData.slice().sort(compareOffers).slice(0, SIMILAR_OFFER_COUNT);
   }
 
+  pointsDataFilter = filterCount ? getPointsDataFilter(pointsDataFilter) : getPointsDataFilter(pointsData);
   renderPoints(pointsDataFilter);
 };
 
-const getDataPoints = () => {
+const getDataPoints = (cb) => {
   getData((points) => {
     pointsData = points;
     filterPoints();
+    cb(true);
   },
-  () => showAlert('Ошибка загрузки данных. Обновите страницу снова.'));
+  () => {
+    showAlert('Ошибка загрузки данных. Обновите страницу снова.');
+    cb();
+  });
 };
 
 const initMap = () => {
   map.on('load', () => {
-    toggleActiveStateOfForms(true);
+    toggleActiveStateOfMainForm(true);
     checkValidationForm();
     initCoordinatesOfMainPinMarker();
-    getDataPoints();
+    getDataPoints(toggleActiveStateOfFilterForm);
   })
     .setView(COORDINATES_OF_TOKIO, 10);
 
